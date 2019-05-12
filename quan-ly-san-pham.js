@@ -1,5 +1,9 @@
 let products = [];
 let idProduct = 0;
+let editForm = document.getElementById('showEdit');
+let editProduct = document.getElementById('editProduct');
+let selectedProductId = document.getElementById('selectedProductId');
+let tbodyElement = document.getElementById('displayProduct');
 
 displayCount();
 
@@ -38,7 +42,6 @@ function displayCount() {
 }
 
 function addRow(product) {
-    let tbodyElement = document.getElementById('displayProduct');
 
     // tao dong moi
     let row = document.createElement('tr');
@@ -48,13 +51,15 @@ function addRow(product) {
     let editButton = document.createElement('button');
     let deleteButton = document.createElement('button');
 
-    let productName = document.createTextNode(product.name);
-    cellText.appendChild(productName);
+    row.setAttribute('id', 'row' + product.id);
+
+    cellText.setAttribute('id', 'productName' + product.id);
+    cellText.innerHTML = product.name;
 
     editButton.setAttribute('id', 'editButton' + product.id);
     editButton.innerHTML = 'Edit';
     editButton.onclick = function () {
-        showEdit(product);
+        showEditForm(product);
     };
     cellEdit.appendChild(editButton);
 
@@ -72,10 +77,32 @@ function addRow(product) {
     tbodyElement.appendChild(row);
 }
 
-function showEdit(product) {
-    
+function showEditForm(product) {
+    editForm.style.display = "block";
+    editProduct.value = product.name;
+    selectedProductId.value = product.id;
+}
+
+function hideEditForm() {
+    editForm.style.display = "none";
+    editProduct.value = "";
+    selectedProductId.value = "";
+}
+
+function save() {
+    let selectedProduct = products.find(function (product) {
+        return product.id == selectedProductId.value;
+    });
+    selectedProduct.name = editProduct.value;
+    document.getElementById('productName' + selectedProduct.id).innerHTML = selectedProduct.name;
+    hideEditForm();
 }
 
 function deleteProduct(id) {
-
+    let productIndex = products.findIndex(function(product) {
+        return product.id == id;
+    });
+    products.splice(productIndex, 1);
+    let row = document.getElementById('row' + id);
+    tbodyElement.removeChild(row);
 }
